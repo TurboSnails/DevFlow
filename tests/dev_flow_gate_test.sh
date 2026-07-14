@@ -38,7 +38,18 @@ state_set_phase "paused"
 output="$("$GATE")"
 [ -z "$output" ] || fail "expected no block output for paused"
 
-# 6. blocks at cap (40) -> allow even mid-cycle
+# 6. blocks at boundary (39) -> block, increment to 40
+state_set_phase "build"
+tmp="$(mktemp)"
+jq '.blocks = 39' "$DEV_FLOW_STATE_FILE" > "$tmp" && mv "$tmp" "$DEV_FLOW_STATE_FILE"
+output="$("$GATE")"
+echo "$output" | grep -q '"decision":"block"' || fail "expected block decision at blocks=39"
+[ "$(state_get blocks)" = "40" ] || fail "blocks should be incremented to 40 at boundary"
+# next call at blocks=40 should allow
+output="$("$GATE")"
+[ -z "$output" ] || fail "expected no block output once blocks cap (40) reached"
+
+# 7. blocks at cap (40) -> allow even mid-cycle
 state_set_phase "build"
 tmp="$(mktemp)"
 jq '.blocks = 40' "$DEV_FLOW_STATE_FILE" > "$tmp" && mv "$tmp" "$DEV_FLOW_STATE_FILE"

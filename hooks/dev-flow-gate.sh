@@ -12,14 +12,14 @@ if ! state_exists; then
   exit 0
 fi
 
-phase="$(state_get phase)"
+phase="$(state_get phase)" || exit 0
 case "$phase" in
   done|paused|await-approval)
     exit 0
     ;;
 esac
 
-blocks="$(state_get blocks)"
+blocks="$(state_get blocks)" || exit 0
 if [ "$blocks" -ge "$BLOCK_CAP" ]; then
   exit 0
 fi
