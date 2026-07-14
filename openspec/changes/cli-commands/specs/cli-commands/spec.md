@@ -41,8 +41,8 @@
 - **THEN** the command reports that the installer isn't available yet and takes no action, rather than guessing at an alternative update mechanism
 
 ### Requirement: Commands never carry skill-style auto-trigger behavior
-None of the four `commands/dev-flow/*.md` files SHALL include a `description:` frontmatter field of the kind that causes Claude Code skill auto-triggering, preserving `orchestration-engine`'s single-auto-trigger rule.
+All four command files SHALL live under `commands/dev-flow/`, not `skills/`, so they are only invoked by explicit slash-command name and never semantically auto-triggered — a `description:` frontmatter field is expected and conventional on a command file (used for `/help` listing, matching this repo's existing command files such as `.claude/commands/opsx/propose.md`) and does NOT cause auto-triggering; only a file under a `skills/` directory with a matching `SKILL.md` structure is semantically matched and auto-triggered by Claude Code.
 
 #### Scenario: Reviewing the command files
 - **WHEN** any of `commands/dev-flow/start.md`, `stop.md`, `status.md`, `update.md` is inspected
-- **THEN** none of them contains skill-style auto-trigger frontmatter, and the `dev-flow` skill (in `skills/dev-flow/SKILL.md`) remains the only auto-triggered entry point in the project
+- **THEN** each lives under `commands/dev-flow/` (not under any `skills/` directory), and the `dev-flow` skill (in `skills/dev-flow/SKILL.md`) remains the only auto-triggered entry point in the project

@@ -20,6 +20,6 @@
 
 ## 5. Cross-cutting check
 
-- [ ] 5.1 Write a test (`tests/cli_commands_no_autotrigger_test.sh`) asserting none of the four new command files contain a `description:` frontmatter field (the auto-trigger marker), keeping `dev-flow` the sole auto-triggered skill
+- [ ] 5.1 Write a test (`tests/cli_commands_no_autotrigger_test.sh`) asserting all four new command files live under `commands/dev-flow/` (not under any `skills/` directory) — a `description:` field is fine and expected (matches this repo's other command files), the invariant being checked is file placement, not field presence
 - [ ] 5.2 Run all five new test files together with the full existing suite and confirm pristine pass output, no regressions
 - [ ] 5.3 Cross-check every requirement in `specs/cli-commands/spec.md` has a corresponding test assertion above; fill any gaps
