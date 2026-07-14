@@ -21,3 +21,14 @@ state_exists || fail "state_exists should be true after init"
 [ "$(state_get spec_tool)" = "openspec" ] || fail "spec_tool mismatch"
 
 echo "PASS: lib/state.sh (init/get/exists)"
+
+# --- state_set_phase updates phase in place ---
+state_set_phase "plan"
+[ "$(state_get phase)" = "plan" ] || fail "state_set_phase did not update phase"
+
+# --- state_increment_blocks increments by 1 each call ---
+state_increment_blocks
+state_increment_blocks
+[ "$(state_get blocks)" = "2" ] || fail "state_increment_blocks did not increment twice"
+
+echo "PASS: lib/state.sh (set_phase/increment_blocks)"

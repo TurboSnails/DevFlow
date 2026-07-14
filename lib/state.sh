@@ -29,3 +29,18 @@ state_get() {
   local field="$1"
   jq -r --arg f "$field" '.[$f]' "$(state_file)"
 }
+
+state_set_phase() {
+  local phase="$1"
+  local file tmp
+  file="$(state_file)"
+  tmp="$(mktemp)"
+  jq --arg phase "$phase" '.phase = $phase' "$file" > "$tmp" && mv "$tmp" "$file"
+}
+
+state_increment_blocks() {
+  local file tmp
+  file="$(state_file)"
+  tmp="$(mktemp)"
+  jq '.blocks += 1' "$file" > "$tmp" && mv "$tmp" "$file"
+}
