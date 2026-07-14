@@ -22,11 +22,12 @@ output="$("$GATE")"
 echo "$output" | grep -q '"decision":"block"' || fail "expected block decision for phase=build"
 [ "$(state_get blocks)" = "1" ] || fail "blocks should be incremented to 1 after one block"
 
-# 3. phase=await-approval -> allow, no output, blocks untouched
+# 3. phase=await-approval -> allow, no output; state_set_phase resets blocks
+# to 0 on the phase change, and await-approval's gate call does not increment.
 state_set_phase "await-approval"
 output="$("$GATE")"
 [ -z "$output" ] || fail "expected no block output for await-approval"
-[ "$(state_get blocks)" = "1" ] || fail "blocks should stay at 1 (await-approval does not increment)"
+[ "$(state_get blocks)" = "0" ] || fail "blocks should be reset to 0 by state_set_phase and stay there (await-approval does not increment)"
 
 # 4. phase=done -> allow, no output
 state_set_phase "done"

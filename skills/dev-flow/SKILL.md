@@ -22,6 +22,18 @@ description: 本项目所有开发任务的唯一自动触发入口。用户提�
 - `state_set_phase <phase>` — 切换到下一阶段时调用
 - `state_increment_blocks` — 由 Stop hook 自己调用,skill 不需要手动调
 
+这些函数定义在 `lib/state.sh` 里,每个 Bash 工具调用都是一个全新的
+shell,函数不会跨调用保留。因此每次调用状态函数,必须和
+`source lib/state.sh` 在同一次 Bash 调用里(或者当前 shell 已经
+source 过),例如:
+
+```bash
+source lib/state.sh && state_set_phase "plan"
+```
+
+以上所有操作都假定当前工作目录是项目根目录(`lib/state.sh` 的默认状态
+文件路径和 source 路径都是相对路径)。
+
 ## 阶段序列(固定,不可跳过或重排)
 
 ```
@@ -82,6 +94,11 @@ propose → await-approval → plan → build → verify → ship → archive �
 再次查找 `skills/dev-flow/references/spec-tool-<spec_tool>.md`,按该
 文件里 "archive 阶段做什么" 一节的指示归档 spec。完成后执行
 `state_set_phase "done"`。
+
+- **文件不存在**:和 propose 阶段一样,不要猜测或跳过。执行
+  `state_set_phase "paused"`,向用户说明 `spec_tool` 配置的值没有对应
+  的 reference 文件,请用户修正 `.claude/dev-flow.config.json` 后再
+  继续。
 
 ## 用户要求停止
 

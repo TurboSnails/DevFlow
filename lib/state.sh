@@ -35,7 +35,7 @@ state_set_phase() {
   local file tmp
   file="$(state_file)"
   tmp="$(mktemp)"
-  jq --arg phase "$phase" '.phase = $phase' "$file" > "$tmp" && mv "$tmp" "$file"
+  jq --arg phase "$phase" '.phase = $phase | .blocks = 0' "$file" > "$tmp" && mv "$tmp" "$file"
 }
 
 state_increment_blocks() {

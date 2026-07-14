@@ -31,4 +31,12 @@ state_increment_blocks
 state_increment_blocks
 [ "$(state_get blocks)" = "2" ] || fail "state_increment_blocks did not increment twice"
 
+# --- state_set_phase resets a nonzero blocks counter back to 0 ---
+state_increment_blocks
+state_increment_blocks
+[ "$(state_get blocks)" = "4" ] || fail "blocks should be 4 before phase change"
+state_set_phase "build"
+[ "$(state_get phase)" = "build" ] || fail "state_set_phase did not update phase on reset call"
+[ "$(state_get blocks)" = "0" ] || fail "state_set_phase should reset blocks to 0 on phase change"
+
 echo "PASS: lib/state.sh (set_phase/increment_blocks)"
