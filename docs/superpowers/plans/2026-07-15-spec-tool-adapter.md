@@ -29,7 +29,7 @@
 - Consumes: nothing (pure Markdown, read by the `dev-flow` skill at runtime, not sourced/executed)
 - Produces: the file the engine looks up when `spec_tool` is `"openspec"`; must satisfy `orchestration-engine`'s existing lookup path `skills/dev-flow/references/spec-tool-<spec_tool>.md` and its two-section contract
 
-- [ ] **Step 1: Write the failing structural test**
+- [x] **Step 1: Write the failing structural test**
 
 Create `tests/spec_tool_openspec_test.sh`:
 
@@ -57,12 +57,12 @@ Make it executable:
 chmod +x tests/spec_tool_openspec_test.sh
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `bash tests/spec_tool_openspec_test.sh`
 Expected: FAIL — `spec-tool-openspec.md does not exist`
 
-- [ ] **Step 3: Write the reference file content**
+- [x] **Step 3: Write the reference file content**
 
 Create `skills/dev-flow/references/spec-tool-openspec.md`:
 
@@ -94,12 +94,12 @@ Create `skills/dev-flow/references/spec-tool-openspec.md`:
 回 `openspec/specs/`)。归档完成后,引擎照常把 `phase` 设为 `done`。
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `bash tests/spec_tool_openspec_test.sh`
 Expected: `PASS: skills/dev-flow/references/spec-tool-openspec.md structure`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/dev-flow/references/spec-tool-openspec.md tests/spec_tool_openspec_test.sh
@@ -118,7 +118,7 @@ git commit -m "feat: add spec-tool-openspec.md reference for dev-flow propose/ar
 - Consumes: nothing (pure Markdown)
 - Produces: the file the engine looks up when `spec_tool` is `"speckit"`
 
-- [ ] **Step 1: Write the failing structural test**
+- [x] **Step 1: Write the failing structural test**
 
 Create `tests/spec_tool_speckit_test.sh`:
 
@@ -164,12 +164,12 @@ Make it executable:
 chmod +x tests/spec_tool_speckit_test.sh
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `bash tests/spec_tool_speckit_test.sh`
 Expected: FAIL — `spec-tool-speckit.md does not exist`
 
-- [ ] **Step 3: Write the reference file content**
+- [x] **Step 3: Write the reference file content**
 
 Create `skills/dev-flow/references/spec-tool-speckit.md`:
 
@@ -209,12 +209,12 @@ Spec Kit 没有归档概念。`specs/<feature>/` 下的 spec 文件本身就是�
 正常结束。
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `bash tests/spec_tool_speckit_test.sh`
 Expected: `PASS: skills/dev-flow/references/spec-tool-speckit.md structure`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/dev-flow/references/spec-tool-speckit.md tests/spec_tool_speckit_test.sh
@@ -231,7 +231,7 @@ git commit -m "feat: add spec-tool-speckit.md reference for dev-flow propose/arc
 **Interfaces:**
 - Consumes: both reference files from Task 1 and Task 2 directly (read as plain text, no sourcing)
 
-- [ ] **Step 1: Write the test**
+- [x] **Step 1: Write the test**
 
 Create `tests/spec_tool_adapter_consistency_test.sh`:
 
@@ -266,14 +266,14 @@ Make it executable:
 chmod +x tests/spec_tool_adapter_consistency_test.sh
 ```
 
-- [ ] **Step 2: Run test to verify it passes**
+- [x] **Step 2: Run test to verify it passes**
 
 This test should pass immediately once Tasks 1-2 are committed correctly (it re-validates properties both files should already have, not new behavior to implement) — run it once as a verification gate rather than expecting red-then-green:
 
 Run: `bash tests/spec_tool_adapter_consistency_test.sh`
 Expected: `PASS: spec-tool-adapter reference files are consistent and mutually exclusive`
 
-- [ ] **Step 3: Run the full test suite together (all spec-tool-adapter tests plus the existing orchestration-engine suite, to confirm no regressions)**
+- [x] **Step 3: Run the full test suite together (all spec-tool-adapter tests plus the existing orchestration-engine suite, to confirm no regressions)**
 
 Run:
 ```bash
@@ -284,7 +284,7 @@ done
 ```
 Expected: seven `PASS:` lines, no `FAIL:` lines, exit code 0
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add tests/spec_tool_adapter_consistency_test.sh
