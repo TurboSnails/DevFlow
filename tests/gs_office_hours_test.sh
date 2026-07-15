@@ -11,6 +11,9 @@ grep -q '^description:' "$FILE" || fail "missing description: frontmatter field"
 count="$(grep -cE '^[1-6]\. ' "$FILE")"
 [ "$count" = "6" ] || fail "expected exactly 6 numbered questions, found $count"
 
+total_count="$(grep -cE '^[0-9]+\. ' "$FILE")"
+[ "$total_count" = "6" ] || fail "expected total numbered items to be exactly 6, found $total_count"
+
 grep -qi 'one at a time' "$FILE" || fail "does not instruct asking one at a time"
 
 echo "PASS: commands/gs/office-hours.md structure"

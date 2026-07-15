@@ -11,6 +11,9 @@ grep -q '^description:' "$FILE" || fail "missing description: frontmatter field"
 count="$(grep -cE '^[1-3]\. ' "$FILE")"
 [ "$count" = "3" ] || fail "expected exactly 3 numbered questions, found $count"
 
+total_count="$(grep -cE '^[0-9]+\. ' "$FILE")"
+[ "$total_count" = "3" ] || fail "expected total numbered items to be exactly 3, found $total_count"
+
 grep -qi 'wait for the user' "$FILE" || fail "does not instruct waiting for user input on each question"
 
 echo "PASS: commands/gs/retro.md structure"
