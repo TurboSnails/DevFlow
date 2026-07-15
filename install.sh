@@ -107,7 +107,46 @@ copy_lib() {
     cp "$script_dir/lib/state.sh" lib/state.sh
   fi
 }
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+resolve_source_dir() {
+  local candidate
+  if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+    candidate="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -d "$candidate/skills" ] && [ -d "$candidate/commands" ] && [ -d "$candidate/hooks" ] && [ -d "$candidate/lib" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  fi
+  return 1
+}
+
+fetch_remote_source() {
+  command -v curl >/dev/null 2>&1 || { echo "Error: curl is required to install CodeFlow without a local checkout." >&2; exit 1; }
+  command -v tar >/dev/null 2>&1 || { echo "Error: tar is required to install CodeFlow without a local checkout." >&2; exit 1; }
+  local url="${CODEFLOW_SOURCE_URL:-https://github.com/TurboSnails/DevFlow/archive/refs/heads/main.tar.gz}"
+  local tmp
+  tmp="$(mktemp -d)"
+  trap "rm -rf '$tmp'" EXIT
+  if ! curl -fsSL "$url" | tar -xz -C "$tmp"; then
+    echo "Error: failed to download CodeFlow source from $url" >&2
+    exit 1
+  fi
+  local extracted
+  extracted="$(find "$tmp" -mindepth 1 -maxdepth 1 -type d | head -n1)"
+  if [ -z "$extracted" ]; then
+    echo "Error: downloaded archive from $url did not contain a source directory" >&2
+    exit 1
+  fi
+  trap - EXIT
+  echo "$extracted"
+}
+
+if source_dir="$(resolve_source_dir)"; then
+  script_dir="$source_dir"
+else
+  script_dir="$(fetch_remote_source)"
+  remote_tmp_root="$(dirname "$script_dir")"
+  trap 'rm -rf "$remote_tmp_root"' EXIT
+fi
 copy_lib
 for selected_target in "${targets[@]}"; do
   case "$selected_target" in
