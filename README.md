@@ -1,5 +1,7 @@
 # CodeFlow
 
+English | [简体中文](README.zh-CN.md)
+
 CodeFlow packages a self-driving development workflow — spec → plan → build →
 verify → ship → archive — as an installable skill/command bundle for Claude
 Code, Codex, and Cursor. Describe what you want to build; the `dev-flow`
