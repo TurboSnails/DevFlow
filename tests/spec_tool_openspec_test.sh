@@ -12,4 +12,8 @@ grep -q '/opsx:propose' "$FILE" || fail "does not mention /opsx:propose"
 grep -q '/opsx:archive' "$FILE" || fail "does not mention /opsx:archive"
 grep -qF 'openspec/changes/' "$FILE" || fail "does not state the openspec/changes/<feature>/ directory formula"
 
+if grep -qF '.claude/dev-flow.config.json' "$FILE"; then
+  fail "spec-tool-openspec.md must not hardcode the legacy .claude/dev-flow.config.json path"
+fi
+
 echo "PASS: skills/dev-flow/references/spec-tool-openspec.md structure"

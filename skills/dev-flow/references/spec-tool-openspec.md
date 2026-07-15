@@ -1,7 +1,8 @@
 # spec-tool: openspec
 
-供 `dev-flow` 引擎在 `.claude/dev-flow.config.json` 的 `spec_tool`
-配置为 `"openspec"` 时,在 propose 和 archive 阶段查阅。
+供 `dev-flow` 引擎在项目配置文件(`lib/state.sh` 的 `config_file()`,
+默认 `.codeflow/dev-flow.config.json`)的 `spec_tool` 配置为
+`"openspec"` 时,在 propose 和 archive 阶段查阅。
 
 ## propose 阶段做什么
 

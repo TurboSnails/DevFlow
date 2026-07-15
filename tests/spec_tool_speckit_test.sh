@@ -30,4 +30,8 @@ fi
 
 grep -qF '不要在这里运行 `/speckit.constitution`' "$FILE" || fail "must document that /speckit.constitution is not run automatically here"
 
+if grep -qF '.claude/dev-flow.config.json' "$FILE"; then
+  fail "spec-tool-speckit.md must not hardcode the legacy .claude/dev-flow.config.json path"
+fi
+
 echo "PASS: skills/dev-flow/references/spec-tool-speckit.md structure"
