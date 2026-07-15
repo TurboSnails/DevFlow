@@ -101,7 +101,14 @@ copy_gs_commands() {
     cp "$script_dir/commands/gs/${command}.md" "$dir/${prefix}${command}.md"
   done
 }
+copy_lib() {
+  mkdir -p lib
+  if [ "$script_dir/lib/state.sh" != "$(pwd)/lib/state.sh" ]; then
+    cp "$script_dir/lib/state.sh" lib/state.sh
+  fi
+}
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+copy_lib
 for selected_target in "${targets[@]}"; do
   case "$selected_target" in
     claude)
