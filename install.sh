@@ -94,20 +94,32 @@ copy_commands() {
     fi
   done
 }
+copy_gs_commands() {
+  local dir="$1" prefix="$2" command
+  mkdir -p "$dir"
+  for command in ship freeze office-hours retro cso; do
+    cp "$script_dir/commands/gs/${command}.md" "$dir/${prefix}${command}.md"
+  done
+}
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for selected_target in "${targets[@]}"; do
   case "$selected_target" in
     claude)
       copy_skill .claude/skills/dev-flow; copy_commands .claude/commands/dev-flow "" claude
+      copy_gs_commands .claude/commands/gs ""
       mkdir -p hooks
       if [ "$script_dir/hooks/dev-flow-gate.sh" != "$(pwd)/hooks/dev-flow-gate.sh" ]; then
         cp "$script_dir/hooks/dev-flow-gate.sh" hooks/dev-flow-gate.sh
       fi
+      if [ "$script_dir/hooks/freeze-gate.sh" != "$(pwd)/hooks/freeze-gate.sh" ]; then
+        cp "$script_dir/hooks/freeze-gate.sh" hooks/freeze-gate.sh
+      fi
       settings=.claude/settings.json; mkdir -p .claude
       [ -f "$settings" ] || echo '{}' > "$settings"
-      jq 'if any(.hooks.Stop[]?.hooks[]?; .command == "bash hooks/dev-flow-gate.sh") then . else .hooks.Stop = ((.hooks.Stop // []) + [{matcher:"",hooks:[{type:"command",command:"bash hooks/dev-flow-gate.sh"}]}]) end' "$settings" > "$settings.tmp" && mv "$settings.tmp" "$settings"
+      jq 'if any(.hooks.Stop[]?.hooks[]?; .command == "bash hooks/dev-flow-gate.sh") then . else .hooks.Stop = ((.hooks.Stop // []) + [{matcher:"",hooks:[{type:"command",command:"bash hooks/dev-flow-gate.sh"}]}]) end
+        | if any(.hooks.PreToolUse[]?.hooks[]?; .command == "bash hooks/freeze-gate.sh") then . else .hooks.PreToolUse = ((.hooks.PreToolUse // []) + [{matcher:"Edit|Write|MultiEdit",hooks:[{type:"command",command:"bash hooks/freeze-gate.sh"}]}]) end' "$settings" > "$settings.tmp" && mv "$settings.tmp" "$settings"
       echo "claude.continuation_gate=enabled";;
     codex) copy_skill .codex/skills/dev-flow; echo "codex.continuation_gate=unavailable";;
-    cursor) copy_skill .cursor/skills/dev-flow; copy_commands .cursor/commands "dev-flow-" cursor; echo "cursor.continuation_gate=unavailable";;
+    cursor) copy_skill .cursor/skills/dev-flow; copy_commands .cursor/commands "dev-flow-" cursor; copy_gs_commands .cursor/commands "gs-"; echo "cursor.continuation_gate=unavailable";;
   esac
 done

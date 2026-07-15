@@ -30,3 +30,6 @@ fi
 To unfreeze, remove the corresponding line from
 `.claude/frozen-paths.txt` directly — there is no separate unfreeze
 command.
+
+Note: this only blocks the Edit/Write/MultiEdit tools — direct shell
+commands (e.g. via the Bash tool) are not intercepted by this gate.

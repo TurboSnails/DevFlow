@@ -15,6 +15,13 @@ payload="$(cat)"
 target="$(echo "$payload" | jq -r '.tool_input.file_path // empty')"
 [ -n "$target" ] || exit 0
 
+cwd="$(pwd)"
+case "$target" in
+  "$cwd"/*)
+    target="${target#"$cwd"/}"
+    ;;
+esac
+
 while IFS= read -r entry || [ -n "$entry" ]; do
   [ -z "$entry" ] && continue
   case "$entry" in

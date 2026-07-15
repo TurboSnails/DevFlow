@@ -1,5 +1,5 @@
 ---
-name: "Office Hours"
+name: "GS: Office Hours"
 description: Six mandatory questions to answer before writing a spec
 category: Workflow
 tags: [workflow, gstack-bridge, product-thinking]

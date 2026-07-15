@@ -52,4 +52,20 @@ EOF
 output="$(payload "src/index.ts" | "$HOOK")"
 [ -z "$output" ] || fail "expected allow still, comments/blank lines must not cause errors or false blocks"
 
+# 8. Absolute file_path under a frozen relative directory entry -> block
+PROJECT_ROOT="$(mktemp -d)"
+FROZEN_ABS="$PROJECT_ROOT/.claude/frozen-paths.txt"
+mkdir -p "$(dirname "$FROZEN_ABS")"
+cat > "$FROZEN_ABS" <<'EOF'
+lib/core/payment/**
+EOF
+output="$(payload "$PROJECT_ROOT/lib/core/payment/api.ts" | (cd "$PROJECT_ROOT" && FROZEN_PATHS_FILE="$FROZEN_ABS" "$HOOK"))"
+echo "$output" | grep -q '"decision":"block"' || fail "expected block for absolute path under frozen directory lib/core/payment/**"
+
+# 9. Absolute file_path NOT under any frozen entry -> allow
+output="$(payload "$PROJECT_ROOT/src/index.ts" | (cd "$PROJECT_ROOT" && FROZEN_PATHS_FILE="$FROZEN_ABS" "$HOOK"))"
+[ -z "$output" ] || fail "expected allow for absolute path not under any frozen entry"
+
+rm -rf "$PROJECT_ROOT"
+
 echo "PASS: hooks/freeze-gate.sh"
