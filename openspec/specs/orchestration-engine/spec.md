@@ -11,11 +11,11 @@ The `dev-flow` skill SHALL be the only Claude Code skill in a CodeFlow-installed
 - **THEN** the `dev-flow` skill is the one that activates, and no other CodeFlow-provided skill activates concurrently or instead
 
 ### Requirement: Run-level state file
-The engine SHALL persist run-level state in `.claude/dev-flow-state.json` with fields `feature` (string), `phase` (string), `blocks` (integer, default 0), and `spec_tool` (string). The engine SHALL create this file when a cycle starts and SHALL update `phase` as the cycle advances.
+The engine SHALL persist run-level state at the path `lib/state.sh`'s `state_file()` returns (default `.codeflow/dev-flow-state.json`, overridable via `DEV_FLOW_STATE_FILE`) with fields `feature` (string), `phase` (string), `blocks` (integer, default 0), and `spec_tool` (string). The engine SHALL create this file when a cycle starts and SHALL update `phase` as the cycle advances.
 
 #### Scenario: Cycle starts
 - **WHEN** the `dev-flow` skill begins a new cycle for a feature
-- **THEN** `.claude/dev-flow-state.json` is created with `phase` set to `propose`, `blocks` set to `0`, and `feature`/`spec_tool` populated
+- **THEN** the state file (default `.codeflow/dev-flow-state.json`) is created with `phase` set to `propose`, `blocks` set to `0`, and `feature`/`spec_tool` populated
 
 #### Scenario: Cycle advances
 - **WHEN** the engine finishes the work for the current phase
@@ -29,14 +29,14 @@ The engine SHALL drive the cycle through exactly this sequence, in order, with n
 - **THEN** the state file's `phase` reaches `done` and the engine stops advancing further
 
 ### Requirement: Forced continuation via Stop hook
-A Stop hook (`hooks/dev-flow-gate.sh`) SHALL run on every Claude stop attempt. If `.claude/dev-flow-state.json` exists and its `phase` is not one of `done`, `paused`, or `await-approval`, the hook SHALL return a decision that blocks the stop and instructs the engine to continue to the next phase.
+A Stop hook (`hooks/dev-flow-gate.sh`) SHALL run on every Claude stop attempt. If the state file (default `.codeflow/dev-flow-state.json`) exists and its `phase` is not one of `done`, `paused`, or `await-approval`, the hook SHALL return a decision that blocks the stop and instructs the engine to continue to the next phase.
 
 #### Scenario: Claude tries to stop mid-cycle
 - **WHEN** the engine finishes a phase other than `await-approval` and attempts to end its turn
 - **THEN** the Stop hook returns `{"decision":"block","reason": "..."}` and Claude continues instead of ending its turn
 
 #### Scenario: No cycle in progress
-- **WHEN** `.claude/dev-flow-state.json` does not exist
+- **WHEN** the state file (default `.codeflow/dev-flow-state.json`) does not exist
 - **THEN** the Stop hook exits without blocking, and normal (non-dev-flow) conversations are unaffected
 
 ### Requirement: Human approval checkpoint
@@ -58,7 +58,7 @@ The Stop hook SHALL track a `blocks` counter in the state file, incrementing it 
 - **THEN** on the 40th forced continuation the hook allows the next stop attempt to succeed rather than blocking indefinitely
 
 ### Requirement: Project config fields read by the engine
-The engine SHALL read three fields from `.claude/dev-flow.config.json` if present: `spec_tool` (string, selects the propose/archive delegation target), `gate_command` (string, shell command run at the `verify` phase), and `codex_review` (boolean, whether to invoke `/codex:review` at the `verify` phase). The engine SHALL NOT create or modify this file.
+The engine SHALL read three fields from the path `lib/state.sh`'s `config_file()` returns (default `.codeflow/dev-flow.config.json`, overridable via `DEV_FLOW_CONFIG_FILE`) if present: `spec_tool` (string, selects the propose/archive delegation target), `gate_command` (string, shell command run at the `verify` phase), and `codex_review` (boolean, whether to invoke `/codex:review` at the `verify` phase). The engine SHALL NOT create or modify this file.
 
 #### Scenario: Verify phase with gate command configured
 - **WHEN** the engine reaches the `verify` phase and `gate_command` is a non-empty string

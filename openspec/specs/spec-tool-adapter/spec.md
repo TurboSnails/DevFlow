@@ -7,11 +7,11 @@ TBD - created by archiving change spec-tool-adapter. Update Purpose after archiv
 The capability SHALL provide `skills/dev-flow/references/spec-tool-openspec.md` and `skills/dev-flow/references/spec-tool-speckit.md`, matching the file-naming convention `references/spec-tool-<spec_tool>.md` that `orchestration-engine` already looks up by the `spec_tool` config value.
 
 #### Scenario: Engine configured for OpenSpec
-- **WHEN** `.claude/dev-flow.config.json` has `spec_tool` set to `"openspec"`
+- **WHEN** the project config file (`config_file()`'s path, default `.codeflow/dev-flow.config.json`) has `spec_tool` set to `"openspec"`
 - **THEN** `skills/dev-flow/references/spec-tool-openspec.md` exists and the engine's propose/archive lookup succeeds
 
 #### Scenario: Engine configured for Spec Kit
-- **WHEN** `.claude/dev-flow.config.json` has `spec_tool` set to `"speckit"`
+- **WHEN** the project config file (`config_file()`'s path, default `.codeflow/dev-flow.config.json`) has `spec_tool` set to `"speckit"`
 - **THEN** `skills/dev-flow/references/spec-tool-speckit.md` exists and the engine's propose/archive lookup succeeds
 
 ### Requirement: Required section headers match the engine's literal contract
