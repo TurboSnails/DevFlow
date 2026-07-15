@@ -40,3 +40,14 @@ state_set_phase "build"
 [ "$(state_get blocks)" = "0" ] || fail "state_set_phase should reset blocks to 0 on phase change"
 
 echo "PASS: lib/state.sh (set_phase/increment_blocks)"
+
+# --- config_file defaults to the neutral .codeflow path ---
+unset DEV_FLOW_CONFIG_FILE
+[ "$(config_file)" = ".codeflow/dev-flow.config.json" ] || fail "config_file() should default to .codeflow/dev-flow.config.json"
+
+# --- config_file honors the DEV_FLOW_CONFIG_FILE override ---
+export DEV_FLOW_CONFIG_FILE="$TMPDIR_TEST/dev-flow.config.json"
+[ "$(config_file)" = "$TMPDIR_TEST/dev-flow.config.json" ] || fail "config_file() should honor DEV_FLOW_CONFIG_FILE override"
+unset DEV_FLOW_CONFIG_FILE
+
+echo "PASS: lib/state.sh (config_file)"

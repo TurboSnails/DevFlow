@@ -7,6 +7,10 @@ state_file() {
   echo "${DEV_FLOW_STATE_FILE:-.codeflow/dev-flow-state.json}"
 }
 
+config_file() {
+  echo "${DEV_FLOW_CONFIG_FILE:-.codeflow/dev-flow.config.json}"
+}
+
 state_exists() {
   [ -f "$(state_file)" ]
 }
