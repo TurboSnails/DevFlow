@@ -43,6 +43,10 @@ Rather than letting a missing-binary shell error surface confusingly (`command n
 
 Purely additive to `install.sh` — one new function (`fetch_remote_source`), one new call site replacing the unconditional `script_dir=...` line with the two-branch detection described in Decision 1, no changes to `copy_skill`/`copy_commands`/hook-registration logic. No existing behavior changes for the `git clone` + local-run path. Rollback is reverting the `install.sh` diff; nothing external depends on the new function existing.
 
+## Addendum: bundled bugfix
+
+While preparing the implementation plan, testing a real `install.sh claude` run into a fresh temp directory revealed that `lib/state.sh` is never copied into the target project at all — only `skills/`, `commands/`, and (for `claude`) `hooks/` are installed. Since both hooks and `SKILL.md` `source lib/state.sh` via a project-root-relative path, every freshly-installed project is currently non-functional (the Stop hook and freeze hook fail immediately with "no such file"). This is unrelated to the remote-fetch feature but is bundled into the same plan (per user decision) since it's a small, independent fix to the same file being modified here: add a `copy_lib()` function, called once per install run (client-agnostic, unlike `copy_skill`/`copy_commands` which run per selected target).
+
 ## Open Questions
 
 None outstanding.
