@@ -21,4 +21,12 @@ grep -q 'gate_command' "$SKILL" || fail "SKILL.md does not document reading gate
 grep -q 'codex_review' "$SKILL" || fail "SKILL.md does not document reading codex_review at verify phase"
 grep -qi 'paused' "$SKILL" || fail "SKILL.md does not document the missing-reference-file pause behavior"
 
+if grep -qF '.claude/dev-flow-state.json' "$SKILL"; then
+  fail "SKILL.md must not hardcode the legacy .claude/dev-flow-state.json path"
+fi
+if grep -qF '.claude/dev-flow.config.json' "$SKILL"; then
+  fail "SKILL.md must not hardcode the legacy .claude/dev-flow.config.json path"
+fi
+grep -q 'config_file' "$SKILL" || fail "SKILL.md does not reference config_file() for reading project config"
+
 echo "PASS: skills/dev-flow/SKILL.md structure"

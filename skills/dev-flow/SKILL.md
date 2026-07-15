@@ -13,14 +13,18 @@ description: 本项目所有开发任务的唯一自动触发入口。用户提�
 
 ## 状态文件
 
-所有运行状态存在 `.claude/dev-flow-state.json`,字段:`feature`、
-`phase`、`blocks`、`spec_tool`。通过 `lib/state.sh` 提供的函数读写,
-不要直接用 jq/cat 手改这个文件:
+所有运行状态存的路径由 `lib/state.sh` 的 `state_file()` 返回(默认
+`.codeflow/dev-flow-state.json`,可用 `DEV_FLOW_STATE_FILE` 环境变量
+覆盖),字段:`feature`、`phase`、`blocks`、`spec_tool`。通过
+`lib/state.sh` 提供的函数读写,不要直接用 jq/cat 手改这个文件:
 
 - `state_init <feature> <spec_tool>` — 开始新一轮循环时调用一次
 - `state_get <field>` — 读取字段
 - `state_set_phase <phase>` — 切换到下一阶段时调用
 - `state_increment_blocks` — 由 Stop hook 自己调用,skill 不需要手动调
+- `config_file` — 返回项目配置文件路径(默认
+  `.codeflow/dev-flow.config.json`,可用 `DEV_FLOW_CONFIG_FILE`
+  环境变量覆盖),配置字段只读,不要创建或修改这个文件
 
 这些函数定义在 `lib/state.sh` 里,每个 Bash 工具调用都是一个全新的
 shell,函数不会跨调用保留。因此每次调用状态函数,必须和
@@ -29,6 +33,12 @@ source 过),例如:
 
 ```bash
 source lib/state.sh && state_set_phase "plan"
+```
+
+读取配置字段同理,例如:
+
+```bash
+source lib/state.sh && jq -r '.gate_command // empty' "$(config_file)"
 ```
 
 以上所有操作都假定当前工作目录是项目根目录(`lib/state.sh` 的默认状态
@@ -44,7 +54,7 @@ propose → await-approval → plan → build → verify → ship → archive �
 
 收到开发需求(或用户执行 `/dev-flow:start <功能名>`)时:
 
-1. 读取 `.claude/dev-flow.config.json` 的 `spec_tool` 字段(缺省视为
+1. 读取 `config_file()` 路径下的 `spec_tool` 字段(缺省视为
    `"openspec"`)
 2. 执行 `state_init "<功能名>" "<spec_tool>"`,此时 `phase` 自动为
    `propose`
@@ -60,7 +70,7 @@ propose → await-approval → plan → build → verify → ship → archive �
   这一轮回复(Stop hook 在 `await-approval` 阶段会放行,不会强制续跑)。
 - **文件不存在**:不要猜测或跳过。执行 `state_set_phase "paused"`,
   向用户说明 `spec_tool` 配置的值没有对应的 reference 文件,请用户
-  修正 `.claude/dev-flow.config.json` 后再继续。
+  修正 `config_file()` 路径下的配置文件后再继续。
 
 ### await-approval
 等待用户批准(用户说"批准/继续/ok"等)。收到批准后执行
@@ -76,7 +86,7 @@ propose → await-approval → plan → build → verify → ship → archive �
 (子代理隔离)。全部任务完成后执行 `state_set_phase "verify"`。
 
 ### verify
-1. 读取 `.claude/dev-flow.config.json` 的 `gate_command` 字段:
+1. 读取 `config_file()` 路径下的 `gate_command` 字段:
    - 非空:执行该 shell 命令,必须成功(exit 0)才能继续;失败则修复
      后重试,不要跳过。
    - 为空或不存在:跳过这一步。
@@ -97,7 +107,7 @@ propose → await-approval → plan → build → verify → ship → archive �
 
 - **文件不存在**:和 propose 阶段一样,不要猜测或跳过。执行
   `state_set_phase "paused"`,向用户说明 `spec_tool` 配置的值没有对应
-  的 reference 文件,请用户修正 `.claude/dev-flow.config.json` 后再
+  的 reference 文件,请用户修正 `config_file()` 路径下的配置文件后再
   继续。
 
 ## 用户要求停止
