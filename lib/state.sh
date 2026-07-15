@@ -4,7 +4,7 @@
 set -euo pipefail
 
 state_file() {
-  echo "${DEV_FLOW_STATE_FILE:-.claude/dev-flow-state.json}"
+  echo "${DEV_FLOW_STATE_FILE:-.codeflow/dev-flow-state.json}"
 }
 
 state_exists() {

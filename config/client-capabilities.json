@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "clients": {
+    "claude": {
+      "commands": {
+        "entry_point": ".claude/commands/dev-flow/<control>.md",
+        "controls": ["start", "stop", "status", "update"]
+      },
+      "skill": {
+        "entry_point": ".claude/skills/dev-flow/SKILL.md"
+      },
+      "continuation_gate": {
+        "availability": "available",
+        "enforcement": "native-stop-hook"
+      },
+      "update": {
+        "installer_target": "claude"
+      }
+    },
+    "codex": {
+      "commands": {
+        "entry_point": null,
+        "controls": ["start", "stop", "status", "update"]
+      },
+      "skill": {
+        "entry_point": ".codex/skills/dev-flow/SKILL.md"
+      },
+      "continuation_gate": {
+        "availability": "unavailable",
+        "enforcement": "prompt-guided"
+      },
+      "update": {
+        "installer_target": "codex"
+      }
+    },
+    "cursor": {
+      "commands": {
+        "entry_point": ".cursor/commands/dev-flow-<control>.md",
+        "controls": ["start", "stop", "status", "update"]
+      },
+      "skill": {
+        "entry_point": ".cursor/skills/dev-flow/SKILL.md"
+      },
+      "continuation_gate": {
+        "availability": "unavailable",
+        "enforcement": "prompt-guided"
+      },
+      "update": {
+        "installer_target": "cursor"
+      }
+    }
+  }
+}
